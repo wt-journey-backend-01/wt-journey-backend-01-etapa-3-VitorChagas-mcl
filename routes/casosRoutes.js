@@ -133,7 +133,7 @@ router.patch("/:id", casosController.partialUpdate);
 /**
  * @swagger
  * /casos/{id}:
- *  delete:
+ *  deleteById:
  *      summary: Deletar caso
  *      tags: [Casos]
  *      parameters:
@@ -147,6 +147,6 @@ router.patch("/:id", casosController.partialUpdate);
  *           description: Casos Deletado com sucesso
  *
  */
-router.delete("/:id", casosController.delete);
+router.delete("/:id", casosController.deleteById);
 
 module.exports = router;

@@ -141,6 +141,6 @@ router.patch('/:id', agentesController.partialUpdate);
  *           description: Agentes Deletado com sucesso
  *
  */
-router.delete('/:id', agentesController.delete);
+router.delete('/:id', agentesController.deleteById);
 
 module.exports = router;
