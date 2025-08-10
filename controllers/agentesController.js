@@ -9,31 +9,35 @@ function isValidDate(dateString) {
 }
 
 module.exports = {
-    findAll(req, res) {
-        let agentes = agentesRepository.findAll();
-        const {cargo, sort } = req.query;
+    async findAll(req, res) {
+        try {
+            let agentes = await agentesRepository.findAll();
+            const { cargo, sort } = req.query;
 
-        if (cargo) {
-            agentes = agentes.filter(agente =>
-                agente.cargo.toLowerCase() === cargo.toLowerCase()
-            );
+            if (cargo) {
+                agentes = agentes.filter(agente =>
+                    agente.cargo.toLowerCase() === cargo.toLowerCase()
+                );
+            }
+
+            if (sort === 'dataDeIncorporacao') {
+                agentes = agentes.sort((a, b) =>
+                    new Date(a.dataDeIncorporacao) - new Date(b.dataDeIncorporacao)
+                );
+            } else if (sort === '-dataDeIncorporacao') {
+                agentes = agentes.sort((a, b) =>
+                    new Date(b.dataDeIncorporacao) - new Date(a.dataDeIncorporacao)
+                );
+            }
+
+            res.json(agentes);
+        } catch (error) {
+            res.status(500).json({ message: "Erro interno no servidor" });
         }
-
-        if (sort === 'dataDeIncorporacao') {
-            agentes = agentes.sort((a, b) =>
-                new Date(a.dataDeIncorporacao) - new Date(b.dataDeIncorporacao)
-            );
-        } else if (sort === '-dataDeIncorporacao') {
-            agentes = agentes.sort((a, b) =>
-                new Date(b.dataDeIncorporacao) - new Date(a.dataDeIncorporacao)
-            );
-        }
-
-        res.json(agentes);
     },
 
 
-    findById(req, res) {
+    async findById(req, res) {
         const id = req.params.id;
         const agente = agentesRepository.findById(id);
         if (!agente) {
@@ -42,10 +46,10 @@ module.exports = {
         res.json(agente);
     },
 
-  create(req, res) {
+    async create(req, res) {
         const { nome, dataDeIncorporacao, cargo } = req.body;
         const errors = [];
-        if (!nome.titulo) {
+        if (!nome || nome.trim() === '') {
             errors.push({ field: "nome", message: "Nome é obrigatório" });
         }
         if (!cargo){
@@ -64,7 +68,7 @@ module.exports = {
   },
 
 
-    update(req, res) {
+    async update(req, res) {
         const id = req.params.id;
         const { nome, dataDeIncorporacao, cargo, id: idBody } = req.body;
 
@@ -105,7 +109,7 @@ module.exports = {
         res.json(agente);
     },
 
-    partialUpdate(req, res) {
+    async partialUpdate(req, res) {
         const id = req.params.id;
         const dadosAtualizados = { ...req.body };
 
@@ -148,7 +152,7 @@ module.exports = {
         res.json(agenteAtualizado);
     },
 
-    delete(req, res) {
+    async delete(req, res) {
         const id = req.params.id;
         const deletado = agentesRepository.delete(id);
         if (!deletado) {

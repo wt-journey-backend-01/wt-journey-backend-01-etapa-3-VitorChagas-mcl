@@ -13,7 +13,7 @@ async function create(data) {
 }
 
 
-async function delet(id){
+async function deleteById(id){
   return db('casos').where({id}).del();
 }
 
@@ -21,5 +21,5 @@ module.exports = {
     findAll,
     insert,
     create,
-    delet,
+    deleteById,
 };

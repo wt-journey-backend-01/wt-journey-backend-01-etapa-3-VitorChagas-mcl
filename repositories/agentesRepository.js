@@ -12,13 +12,13 @@ async function create(agente) {
   return await db('agentes').insert(agente).returning('*');
 }
 
-async function delet(id){
-  return db('agentes').where({id}).del();
+async function deleteById(id) {
+  return db('agentes').where({ id }).del();
 }
 
 module.exports = { 
   findAll, 
   insert,
   create, 
-  delet,
+  deleteById,
 };

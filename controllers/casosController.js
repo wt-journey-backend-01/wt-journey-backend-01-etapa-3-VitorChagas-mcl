@@ -2,7 +2,7 @@ const casosRepository = require('../repositories/casosRepository');
 const agentesRepository = require('../repositories/agentesRepository');
 
 module.exports = {
-    findAll(req, res) {
+    async findAll(req, res) {
         const {titulo, descricao, status, agente_id } = req.query;
         let casos = casosRepository.findAll();
 
@@ -25,7 +25,7 @@ module.exports = {
         res.json(casos);
     },
 
-    findById(req, res) {
+    async findById(req, res) {
         const id = req.params.id;
         const caso = casosRepository.findById(id);
         if (!caso) {
@@ -34,7 +34,7 @@ module.exports = {
         res.json(caso);
     },
 
-    create(req, res) {
+    async create(req, res) {
         const novoCaso = req.body;
         const statusPermitidos = ['aberto', 'solucionado'];
         const errors = [];
@@ -78,7 +78,7 @@ module.exports = {
 
 
     
-    update(req, res) {
+    async update(req, res) {
         const id = req.params.id;
         const dadosAtualizados = { ...req.body };
         if ('id' in req.body) {
@@ -123,7 +123,7 @@ module.exports = {
         res.json(caso);
     },
 
-    partialUpdate(req, res) {
+    async partialUpdate(req, res) {
         const id = req.params.id;
         const dadosAtualizados = { ...req.body };
         if ('id' in req.body) {
@@ -139,7 +139,7 @@ module.exports = {
         res.json(casoAtualizado);
     },
 
-    delete(req, res) {
+    async delete(req, res) {
         const id = req.params.id;
         const deletado = casosRepository.delete(id);
         if (!deletado) {
