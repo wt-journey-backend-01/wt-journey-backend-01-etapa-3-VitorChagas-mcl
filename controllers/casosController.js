@@ -126,22 +126,69 @@ module.exports = {
     async partialUpdate(req, res) {
         const id = req.params.id;
         const dadosAtualizados = { ...req.body };
-        if ('id' in req.body) {
+
+        if (Object.keys(dadosAtualizados).length === 0) {
             return res.status(400).json({
-                status: 400,
-                message: "Não é permitido alterar o ID do caso."
+            status: 400,
+            message: "Nenhum dado para atualizar foi fornecido."
             });
         }
+
+        if ('id' in dadosAtualizados) {
+            return res.status(400).json({
+            status: 400,
+            message: "Não é permitido alterar o ID do caso."
+            });
+        }
+
+        const errors = [];
+        const statusPermitidos = ['aberto', 'solucionado'];
+
+        if ('titulo' in dadosAtualizados) {
+            if (typeof dadosAtualizados.titulo !== 'string' || dadosAtualizados.titulo.trim() === '') {
+            errors.push({ field: "titulo", message: "Título deve ser uma string não vazia" });
+            }
+        }
+
+        if ('descricao' in dadosAtualizados) {
+            if (typeof dadosAtualizados.descricao !== 'string' || dadosAtualizados.descricao.trim() === '') {
+            errors.push({ field: "descricao", message: "Descrição deve ser uma string não vazia" });
+            }
+        }
+
+        if ('status' in dadosAtualizados) {
+            if (!statusPermitidos.includes(dadosAtualizados.status)) {
+            errors.push({ field: "status", message: "Status deve ser 'aberto' ou 'solucionado'" });
+            }
+        }
+
+        if ('agente_id' in dadosAtualizados) {
+            if (typeof dadosAtualizados.agente_id !== 'number' && typeof dadosAtualizados.agente_id !== 'string') {
+            errors.push({ field: "agente_id", message: "Agente_id deve ser um identificador válido" });
+            } else {
+            const agenteExiste = await agentesRepository.findById(dadosAtualizados.agente_id);
+            if (!agenteExiste) {
+                return res.status(404).json({ message: 'Agente não encontrado para o agente_id informado' });
+            }
+            }
+        }
+
+        if (errors.length > 0) {
+            return res.status(400).json({ status: 400, message: "Parâmetros inválidos", errors });
+        }
+
         const casoAtualizado = await casosRepository.update(id, dadosAtualizados);
+
         if (!casoAtualizado) {
             return res.status(404).send('Caso não encontrado');
         }
-        res.json(casoAtualizado);
-    },
 
-    async delete(req, res) {
+        res.json(casoAtualizado);
+        },
+
+    async deleteById(req, res) {
         const id = req.params.id;
-        const deletado = await casosRepository.delete(id);
+        const deletado = await casosRepository.deleteById(id);
         if (!deletado) {
             return res.status(404).send('Caso não encontrado');
         }

@@ -62,7 +62,7 @@ module.exports = {
       return res.status(400).json({ status: 400, message: "Parâmetros inválidos", errors });
     }
 
-    const agenteCriado = await agentesRepository.create({ nome, dataDeIncorporacao, cargo }); // faltava await
+    const agenteCriado = await agentesRepository.create({ nome, dataDeIncorporacao, cargo }); 
     res.status(201).json(agenteCriado);
   },
 
@@ -100,7 +100,7 @@ module.exports = {
       return res.status(400).json({ status: 400, message: "Parâmetros inválidos", errors });
     }
 
-    const agente = await agentesRepository.update(id, dadosAtualizados); // faltava await
+    const agente = await agentesRepository.update(id, dadosAtualizados); 
     if (!agente) {
       return res.status(404).send('Agente não encontrado');
     }
@@ -127,7 +127,6 @@ module.exports = {
 
     const errors = [];
 
-    // Valida somente os campos que vieram no corpo
     if ('nome' in dadosAtualizados) {
       if (typeof dadosAtualizados.nome !== 'string' || dadosAtualizados.nome.trim() === '') {
         errors.push({ field: "nome", message: "Nome deve ser uma string não vazia" });
@@ -150,16 +149,16 @@ module.exports = {
       return res.status(400).json({ status: 400, message: "Parâmetros inválidos", errors });
     }
 
-    const agenteAtualizado = await agentesRepository.update(id, dadosAtualizados); // faltava await
+    const agenteAtualizado = await agentesRepository.update(id, dadosAtualizados); 
     if (!agenteAtualizado) {
       return res.status(404).send('Agente não encontrado');
     }
     res.json(agenteAtualizado);
   },
 
-  async delete(req, res) {
+  async deleteById(req, res) {
     const id = req.params.id;
-    const deletado = await agentesRepository.delete(id); // faltava await
+    const deletado = await agentesRepository.deleteById(id); 
     if (!deletado) {
       return res.status(404).send('Agente não encontrado');
     }

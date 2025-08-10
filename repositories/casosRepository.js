@@ -8,10 +8,6 @@ async function findById(id) {
   return await db('casos').where({ id }).first();
 }
 
-async function insert(data) { 
-  return await db('casos').insert(data).returning('*');
-}
-
 async function create(caso) {
   return await db('casos').insert(caso).returning('*');
 }
@@ -28,7 +24,6 @@ module.exports = {
   findAll,
   findById,
   update,
-  insert,
   create, 
   deleteById,
 };
