@@ -1,25 +1,34 @@
-const db = require("../db/db");
+const db = require('../db/db');
 
 async function findAll() {
-    return db("casos").select("*");
+  return await db('casos').select('*');
+}
+
+async function findById(id) {
+  return await db('casos').where({ id }).first();
 }
 
 async function insert(data) { 
   return await db('casos').insert(data).returning('*');
 }
 
-async function create(data) {
-  return db('casos').insert(data).returning('*');
+async function create(caso) {
+  return await db('casos').insert(caso).returning('*');
 }
 
-
-async function deleteById(id){
-  return db('casos').where({id}).del();
+async function update(id, data) {
+  return await db('casos').where({ id }).update(data).returning('*').then(rows => rows[0]);
 }
 
-module.exports = {
-    findAll,
-    insert,
-    create,
-    deleteById,
+async function deleteById(id) {
+  return await db('casos').where({ id }).del();
+}
+
+module.exports = { 
+  findAll,
+  findById,
+  update,
+  insert,
+  create, 
+  deleteById,
 };
