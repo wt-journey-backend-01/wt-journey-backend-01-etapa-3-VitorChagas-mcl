@@ -4,7 +4,7 @@ const agentesRepository = require('../repositories/agentesRepository');
 module.exports = {
     async findAll(req, res) {
         const {titulo, descricao, status, agente_id } = req.query;
-        let casos = casosRepository.findAll();
+        let casos = await casosRepository.findAll();
 
         if (status) {
             casos = casos.filter(caso => caso.status === status);
@@ -27,7 +27,7 @@ module.exports = {
 
     async findById(req, res) {
         const id = req.params.id;
-        const caso = casosRepository.findById(id);
+        const caso = await casosRepository.findById(id);
         if (!caso) {
             return res.status(404).send('Caso não encontrado');
         }
@@ -67,12 +67,12 @@ module.exports = {
             });
         }
 
-        const agenteExiste = agentesRepository.findById(novoCaso.agente_id);
+        const agenteExiste = await agentesRepository.findById(novoCaso.agente_id);
         if (!agenteExiste) {
             return res.status(404).json({ message: 'Agente não encontrado para o agente_id informado' });
         }
 
-        const casoCriado = casosRepository.create(novoCaso);
+       const casoCriado = await casosRepository.create(novoCaso);
         return res.status(201).json(casoCriado);
     },
 
@@ -107,7 +107,7 @@ module.exports = {
         if (!dadosAtualizados.agente_id) {
             errors.push({ field: "agente_id", message: "Agente é obrigatório" });
         } else {
-            const agenteExiste = agentesRepository.findById(dadosAtualizados.agente_id);
+            const agenteExiste = await agentesRepository.findById(dadosAtualizados.agente_id);
             if (!agenteExiste) {
                 return res.status(404).json({ message: 'Agente não encontrado para o agente_id informado' });
             }
@@ -117,7 +117,7 @@ module.exports = {
             return res.status(400).json({ status: 400, message: "Parâmetros inválidos", errors });
         }
 
-        const caso = casosRepository.update(id, dadosAtualizados);
+        const caso = await casosRepository.update(id, dadosAtualizados);
         if (!caso) return res.status(404).send('Caso não encontrado');
 
         res.json(caso);
@@ -132,7 +132,7 @@ module.exports = {
                 message: "Não é permitido alterar o ID do caso."
             });
         }
-        const casoAtualizado = casosRepository.update(id, dadosAtualizados);
+        const casoAtualizado = await casosRepository.update(id, dadosAtualizados);
         if (!casoAtualizado) {
             return res.status(404).send('Caso não encontrado');
         }
@@ -141,7 +141,7 @@ module.exports = {
 
     async delete(req, res) {
         const id = req.params.id;
-        const deletado = casosRepository.delete(id);
+        const deletado = await casosRepository.delete(id);
         if (!deletado) {
             return res.status(404).send('Caso não encontrado');
         }
