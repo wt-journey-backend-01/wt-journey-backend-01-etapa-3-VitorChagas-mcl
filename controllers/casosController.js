@@ -29,7 +29,7 @@ module.exports = {
         const id = req.params.id;
         const caso = await casosRepository.findById(id);
         if (!caso) {
-            return res.status(404).send('Caso não encontrado');
+            return res.status(404).json({message: 'Caso não encontrado'});
         }
         res.json(caso);
     },
@@ -118,7 +118,7 @@ module.exports = {
         }
 
         const caso = await casosRepository.update(id, dadosAtualizados);
-        if (!caso) return res.status(404).send('Caso não encontrado');
+        if (!caso) return res.status(404).json({message:'Caso não encontrado'});
 
         res.json(caso);
     },
@@ -180,7 +180,7 @@ module.exports = {
         const casoAtualizado = await casosRepository.update(id, dadosAtualizados);
 
         if (!casoAtualizado) {
-            return res.status(404).send('Caso não encontrado');
+            return res.status(404).json({message:'Caso não encontrado'});
         }
 
         res.json(casoAtualizado);
@@ -190,8 +190,8 @@ module.exports = {
         const id = req.params.id;
         const deletado = await casosRepository.deleteById(id);
         if (!deletado) {
-            return res.status(404).send('Caso não encontrado');
+            return res.status(404).json({message:'Caso não encontrado'});
         }
-        res.status(204).send();
+        res.status(204).json();
     }
 };

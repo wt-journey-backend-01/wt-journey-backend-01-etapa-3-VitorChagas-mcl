@@ -40,7 +40,7 @@ module.exports = {
     const id = req.params.id;
     const agente = await agentesRepository.findById(id);
     if (!agente) {
-      return res.status(404).send('Agente não encontrado');
+      return res.status(404).json({message:'Agente não encontrado'});
     }
     res.json(agente);
   },
@@ -102,7 +102,7 @@ module.exports = {
 
     const agente = await agentesRepository.update(id, dadosAtualizados); 
     if (!agente) {
-      return res.status(404).send('Agente não encontrado');
+      return res.status(404).json({message:'Agente não encontrado'});
     }
     res.json(agente);
   },
@@ -151,7 +151,7 @@ module.exports = {
 
     const agenteAtualizado = await agentesRepository.update(id, dadosAtualizados); 
     if (!agenteAtualizado) {
-      return res.status(404).send('Agente não encontrado');
+      return res.status(404).json({message:'Agente não encontrado'});
     }
     res.json(agenteAtualizado);
   },
@@ -160,7 +160,7 @@ module.exports = {
     const id = req.params.id;
     const deletado = await agentesRepository.deleteById(id); 
     if (!deletado) {
-      return res.status(404).send('Agente não encontrado');
+      return res.status(404).json({message:'Agente não encontrado'});
     }
     res.status(204).send();
   }
