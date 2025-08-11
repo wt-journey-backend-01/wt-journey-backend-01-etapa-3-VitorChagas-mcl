@@ -8,8 +8,9 @@ async function findById(id) {
   return await db('casos').where({ id }).first();
 }
 
-async function create(caso) {
-  return await db('casos').insert(caso).returning('*');
+async function create(data) { 
+  const rows = await db('casos').insert(data).returning('*');
+  return rows[0]; // Retorna o objeto criado
 }
 
 async function update(id, data) {

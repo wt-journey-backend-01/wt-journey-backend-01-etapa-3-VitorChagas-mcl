@@ -9,9 +9,9 @@ module.exports = {
         if (status) {
             casos = casos.filter(caso => caso.status === status);
         }
-
         if (agente_id) {
-            casos = casos.filter(caso => caso.agente_id === agente_id);
+        const agenteIdNum = Number(agente_id);
+        casos = casos.filter(caso => caso.agente_id === agenteIdNum);
         }
 
         if(titulo){

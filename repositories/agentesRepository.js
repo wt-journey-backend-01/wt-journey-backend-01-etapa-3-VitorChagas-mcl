@@ -9,7 +9,8 @@ async function findById(id) {
 }
 
 async function create(data) { 
-  return await db('agentes').insert(data).returning('*');
+  const rows = await db('agentes').insert(data).returning('*');
+  return rows[0];
 }
 
 
