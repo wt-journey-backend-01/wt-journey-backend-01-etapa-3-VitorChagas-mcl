@@ -63,7 +63,7 @@ router.post("/", casosController.create);
 /**
  * @swagger
  * /casos/{id}:
- *  post:
+ *  put:
  *      summary: Atualização de casos
  *      tags: [Casos]
  *      parameters:
@@ -98,7 +98,7 @@ router.put("/:id", casosController.update);
 /**
  * @swagger
  * /casos/{id}:
- *  put:
+ *  patch:
  *      summary: Atualizar de casos
  *      tags: [Casos]
  *      parameters:
