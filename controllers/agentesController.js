@@ -63,8 +63,7 @@ module.exports = {
       return res.status(400).json({ status: 400, message: "Parâmetros inválidos", errors });
     }
 
-    const [novoId] = await agentesRepository.create({ nome, dataDeIncorporacao, cargo });
-    const agenteCriado = await agentesRepository.findById(novoId);
+    const agenteCriado = await agentesRepository.create({ nome, dataDeIncorporacao, cargo });
     return res.status(201).json(agenteCriado);
   },
 
@@ -96,11 +95,11 @@ module.exports = {
         return res.status(400).json({ status: 400, message: "Parâmetros inválidos", errors });
       }
 
-      await agentesRepository.update(id, dadosAtualizados);
-      const agenteAtualizado = await agentesRepository.findById(id);
+      const agenteAtualizado = await agentesRepository.update(id, dadosAtualizados); 
       if (!agenteAtualizado) {
         return res.status(404).json({ message: 'Agente não encontrado' });
       }
+
       res.status(200).json(agenteAtualizado);
     },
 
@@ -142,11 +141,11 @@ module.exports = {
       return res.status(400).json({ status: 400, message: "Parâmetros inválidos", errors });
     }
 
-    await agentesRepository.update(id, dadosAtualizados);
-    const agenteAtualizado = await agentesRepository.findById(id);
+    const agenteAtualizado = await agentesRepository.update(id, dadosAtualizados); 
     if (!agenteAtualizado) {
       return res.status(404).json({ message: 'Agente não encontrado' });
     }
+
     res.status(200).json(agenteAtualizado);
   },
 
