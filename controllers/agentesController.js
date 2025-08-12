@@ -64,7 +64,7 @@ module.exports = {
     }
 
     const agenteCriado = await agentesRepository.create({ nome, dataDeIncorporacao, cargo });
-    return res.status(201).json(agenteCriado[0]);
+    return res.status(201).json(agenteCriado);
   },
 
   async update(req, res) {
@@ -100,7 +100,7 @@ module.exports = {
         return res.status(404).json({ message: 'Agente não encontrado' });
       }
 
-      res.status(200).json(agenteAtualizado[0]);
+      res.status(200).json(agenteAtualizado);
     },
 
   async partialUpdate(req, res) {
@@ -146,7 +146,7 @@ module.exports = {
       return res.status(404).json({ message: 'Agente não encontrado' });
     }
 
-    res.status(200).json(agenteAtualizado[0]);
+    res.status(200).json(agenteAtualizado);
   },
 
   async deleteById(req, res) {

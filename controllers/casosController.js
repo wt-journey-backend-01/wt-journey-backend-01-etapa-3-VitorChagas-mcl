@@ -73,7 +73,7 @@ module.exports = {
         }
 
        const casoCriado = await casosRepository.create(novoCaso);
-        return res.status(201).json(casoCriado[0]);
+        return res.status(201).json(casoCriado);
     },
 
 
@@ -117,10 +117,10 @@ module.exports = {
             return res.status(400).json({ status: 400, message: "Parâmetros inválidos", errors });
         }
 
-        const casoAtualizado = await casosRepository.update(id, dadosAtualizados);
-        if (!casoAtualizado) return res.status(404).json({message:'Caso não encontrado'});
+        const caso = await casosRepository.update(id, dadosAtualizados);
+        if (!caso) return res.status(404).json({message:'Caso não encontrado'});
 
-        res.json(casoAtualizado[0]);
+        res.json(caso);
     },
 
     async partialUpdate(req, res) {
@@ -183,7 +183,7 @@ module.exports = {
             return res.status(404).json({message:'Caso não encontrado'});
         }
 
-        res.json(casoAtualizado[0]);
+        res.json(casoAtualizado);
         },
 
     async deleteById(req, res) {
