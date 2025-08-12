@@ -1,9 +1,5 @@
-function errorHandler(err, req, res, next) {
-    return {
-        status: err.status || 500,
-        messsagem: err.message || 'Erro interno do servidor',
-        errors: err.errors || []
-    };
+async function errorHandler(res, errors ) {
+    return res.status(400).json({ status: 400, message: "Parâmetros inválidos", errors });
 }
 
 module.exports = errorHandler;
