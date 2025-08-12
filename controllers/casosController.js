@@ -192,6 +192,6 @@ module.exports = {
         if (!deletado) {
             return res.status(404).json({message:'Caso não encontrado'});
         }
-        res.status(204).json();
+        res.status(204).send();
     }
 };

@@ -47,24 +47,24 @@ module.exports = {
 
   async create(req, res) {
     const { nome, dataDeIncorporacao, cargo } = req.body;
-    if (!('nome' in dadosAtualizados) || typeof dadosAtualizados.nome !== 'string' || dadosAtualizados.nome.trim() === '') {
+    const errors = [];
+
+    if (!nome || typeof nome !== 'string' || nome.trim() === '') {
       errors.push({ field: "nome", message: "Nome é obrigatório e deve ser uma string não vazia" });
     }
-    if (!('cargo' in dadosAtualizados) || typeof dadosAtualizados.cargo !== 'string' || dadosAtualizados.cargo.trim() === '') {
+    if (!cargo || typeof cargo !== 'string' || cargo.trim() === '') {
       errors.push({ field: "cargo", message: "Cargo é obrigatório e deve ser uma string não vazia" });
     }
-    if ('dataDeIncorporacao' in dadosAtualizados) {
-      if (!isValidDate(dadosAtualizados.dataDeIncorporacao)) {
-        errors.push({ field: "dataDeIncorporacao", message: "Data inválida ou no futuro" });
-      }
+    if (!dataDeIncorporacao || !isValidDate(dataDeIncorporacao)) {
+      errors.push({ field: "dataDeIncorporacao", message: "Data inválida ou no futuro" });
     }
 
     if (errors.length > 0) {
       return res.status(400).json({ status: 400, message: "Parâmetros inválidos", errors });
     }
 
-    const agenteCriado = await agentesRepository.create({ nome, dataDeIncorporacao, cargo }); 
-    res.status(201).json(agenteCriado);
+    const agenteCriado = await agentesRepository.create({ nome, dataDeIncorporacao, cargo });
+    return res.status(201).json(agenteCriado);
   },
 
   async update(req, res) {
@@ -79,28 +79,29 @@ module.exports = {
     }
 
     const errors = [];
-    if (!('nome' in dadosAtualizados) || typeof dadosAtualizados.nome !== 'string' || dadosAtualizados.nome.trim() === '') {
-      errors.push({ field: "nome", message: "Nome é obrigatório e deve ser uma string não vazia" });
-    }
-    if (!('cargo' in dadosAtualizados) || typeof dadosAtualizados.cargo !== 'string' || dadosAtualizados.cargo.trim() === '') {
-      errors.push({ field: "cargo", message: "Cargo é obrigatório e deve ser uma string não vazia" });
-    }
-    if ('dataDeIncorporacao' in dadosAtualizados) {
-      if (!isValidDate(dadosAtualizados.dataDeIncorporacao)) {
+      if (!dadosAtualizados.nome || typeof dadosAtualizados.nome !== 'string' || dadosAtualizados.nome.trim() === '') {
+        errors.push({ field: "nome", message: "Nome é obrigatório e deve ser uma string não vazia" });
+      }
+
+      if (!dadosAtualizados.cargo || typeof dadosAtualizados.cargo !== 'string' || dadosAtualizados.cargo.trim() === '') {
+        errors.push({ field: "cargo", message: "Cargo é obrigatório e deve ser uma string não vazia" });
+      }
+
+      if (!dadosAtualizados.dataDeIncorporacao || !isValidDate(dadosAtualizados.dataDeIncorporacao)) {
         errors.push({ field: "dataDeIncorporacao", message: "Data inválida ou no futuro" });
       }
-    }
 
-    if (errors.length > 0) {
-      return res.status(400).json({ status: 400, message: "Parâmetros inválidos", errors });
-    }
+      if (errors.length > 0) {
+        return res.status(400).json({ status: 400, message: "Parâmetros inválidos", errors });
+      }
 
-    const agente = await agentesRepository.update(id, dadosAtualizados); 
-    if (!agente) {
-      return res.status(404).json({message:'Agente não encontrado'});
-    }
-    res.json(agente);
-  },
+      const agenteAtualizado = await agentesRepository.update(id, dadosAtualizados); 
+      if (!agenteAtualizado) {
+        return res.status(404).json({ message: 'Agente não encontrado' });
+      }
+
+      res.status(200).json(agenteAtualizado);
+    },
 
   async partialUpdate(req, res) {
     const id = req.params.id;
@@ -122,26 +123,30 @@ module.exports = {
 
     const errors = [];
 
-    if (!('nome' in dadosAtualizados) || typeof dadosAtualizados.nome !== 'string' || dadosAtualizados.nome.trim() === '') {
-      errors.push({ field: "nome", message: "Nome é obrigatório e deve ser uma string não vazia" });
+    if ('nome' in dadosAtualizados && 
+        (typeof dadosAtualizados.nome !== 'string' || dadosAtualizados.nome.trim() === '')) {
+      errors.push({ field: "nome", message: "Nome deve ser uma string não vazia" });
     }
-    if (!('cargo' in dadosAtualizados) || typeof dadosAtualizados.cargo !== 'string' || dadosAtualizados.cargo.trim() === '') {
-      errors.push({ field: "cargo", message: "Cargo é obrigatório e deve ser uma string não vazia" });
+
+    if ('cargo' in dadosAtualizados && 
+        (typeof dadosAtualizados.cargo !== 'string' || dadosAtualizados.cargo.trim() === '')) {
+      errors.push({ field: "cargo", message: "Cargo deve ser uma string não vazia" });
     }
-    if ('dataDeIncorporacao' in dadosAtualizados) {
-      if (!isValidDate(dadosAtualizados.dataDeIncorporacao)) {
-        errors.push({ field: "dataDeIncorporacao", message: "Data inválida ou no futuro" });
-      }
+
+    if ('dataDeIncorporacao' in dadosAtualizados && !isValidDate(dadosAtualizados.dataDeIncorporacao)) {
+      errors.push({ field: "dataDeIncorporacao", message: "Data inválida ou no futuro" });
     }
+
     if (errors.length > 0) {
       return res.status(400).json({ status: 400, message: "Parâmetros inválidos", errors });
     }
 
     const agenteAtualizado = await agentesRepository.update(id, dadosAtualizados); 
     if (!agenteAtualizado) {
-      return res.status(404).json({message:'Agente não encontrado'});
+      return res.status(404).json({ message: 'Agente não encontrado' });
     }
-    res.json(agenteAtualizado);
+
+    res.status(200).json(agenteAtualizado);
   },
 
   async deleteById(req, res) {
