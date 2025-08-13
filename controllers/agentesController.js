@@ -106,7 +106,7 @@ module.exports = {
 
     const agenteAtualizado = await agentesRepository.update(id, dadosAtualizados); 
     if (!agenteAtualizado) {
-      return res.status(404).json({ message: 'Agente não encontrado' });
+      return res.status(404).json({ error: 'Agente não encontrado' });
     }
     agenteAtualizado.dataDeIncorporacao = formatDate(agenteAtualizado.dataDeIncorporacao);
     res.status(200).json(agenteAtualizado);
@@ -149,7 +149,7 @@ module.exports = {
 
     const agenteAtualizado = await agentesRepository.update(id, dadosAtualizados); 
     if (!agenteAtualizado) {
-      return res.status(404).json({ message: 'Agente não encontrado' });
+      return res.status(404).json({ error: 'Agente não encontrado' });
     }
     agenteAtualizado.dataDeIncorporacao = formatDate(agenteAtualizado.dataDeIncorporacao);
     res.status(200).json(agenteAtualizado);
