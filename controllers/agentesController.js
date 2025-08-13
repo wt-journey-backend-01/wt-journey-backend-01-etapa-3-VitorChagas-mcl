@@ -8,6 +8,10 @@ function isValidDate(dateString) {
   return !isNaN(date.getTime()) && date <= today;
 }
 
+function formatDate(date) {
+  return new Date(date).toISOString().split('T')[0];
+}
+
 module.exports = {
   async findAll(req, res) {
     try {
@@ -30,6 +34,11 @@ module.exports = {
         );
       }
 
+      agentes = agentes.map(a => ({
+        ...a,
+        dataDeIncorporacao: formatDate(a.dataDeIncorporacao)
+      }));
+
       res.json(agentes);
     } catch (error) {
       res.status(500).json({ message: "Erro interno no servidor" });
@@ -40,8 +49,9 @@ module.exports = {
     const id = req.params.id;
     const agente = await agentesRepository.findById(id);
     if (!agente) {
-      return res.status(404).json({message:'Agente não encontrado'});
+      return res.status(404).json({ message: 'Agente não encontrado' });
     }
+    agente.dataDeIncorporacao = formatDate(agente.dataDeIncorporacao);
     res.json(agente);
   },
 
@@ -64,6 +74,7 @@ module.exports = {
     }
 
     const agenteCriado = await agentesRepository.create({ nome, dataDeIncorporacao, cargo });
+    agenteCriado.dataDeIncorporacao = formatDate(agenteCriado.dataDeIncorporacao);
     return res.status(201).json(agenteCriado);
   },
 
@@ -79,29 +90,27 @@ module.exports = {
     }
 
     const errors = [];
-      if (!dadosAtualizados.nome || typeof dadosAtualizados.nome !== 'string' || dadosAtualizados.nome.trim() === '') {
-        errors.push({ field: "nome", message: "Nome é obrigatório e deve ser uma string não vazia" });
-      }
+    if (!dadosAtualizados.nome || typeof dadosAtualizados.nome !== 'string' || dadosAtualizados.nome.trim() === '') {
+      errors.push({ field: "nome", message: "Nome é obrigatório e deve ser uma string não vazia" });
+    }
+    if (!dadosAtualizados.cargo || typeof dadosAtualizados.cargo !== 'string' || dadosAtualizados.cargo.trim() === '') {
+      errors.push({ field: "cargo", message: "Cargo é obrigatório e deve ser uma string não vazia" });
+    }
+    if (!dadosAtualizados.dataDeIncorporacao || !isValidDate(dadosAtualizados.dataDeIncorporacao)) {
+      errors.push({ field: "dataDeIncorporacao", message: "Data inválida ou no futuro" });
+    }
 
-      if (!dadosAtualizados.cargo || typeof dadosAtualizados.cargo !== 'string' || dadosAtualizados.cargo.trim() === '') {
-        errors.push({ field: "cargo", message: "Cargo é obrigatório e deve ser uma string não vazia" });
-      }
+    if (errors.length > 0) {
+      return res.status(400).json({ status: 400, message: "Parâmetros inválidos", errors });
+    }
 
-      if (!dadosAtualizados.dataDeIncorporacao || !isValidDate(dadosAtualizados.dataDeIncorporacao)) {
-        errors.push({ field: "dataDeIncorporacao", message: "Data inválida ou no futuro" });
-      }
-
-      if (errors.length > 0) {
-        return res.status(400).json({ status: 400, message: "Parâmetros inválidos", errors });
-      }
-
-      const agenteAtualizado = await agentesRepository.update(id, dadosAtualizados); 
-      if (!agenteAtualizado) {
-        return res.status(404).json({ message: 'Agente não encontrado' });
-      }
-
-      res.status(200).json(agenteAtualizado);
-    },
+    const agenteAtualizado = await agentesRepository.update(id, dadosAtualizados); 
+    if (!agenteAtualizado) {
+      return res.status(404).json({ message: 'Agente não encontrado' });
+    }
+    agenteAtualizado.dataDeIncorporacao = formatDate(agenteAtualizado.dataDeIncorporacao);
+    res.status(200).json(agenteAtualizado);
+  },
 
   async partialUpdate(req, res) {
     const id = req.params.id;
@@ -122,17 +131,14 @@ module.exports = {
     }
 
     const errors = [];
-
     if ('nome' in dadosAtualizados && 
         (typeof dadosAtualizados.nome !== 'string' || dadosAtualizados.nome.trim() === '')) {
       errors.push({ field: "nome", message: "Nome deve ser uma string não vazia" });
     }
-
     if ('cargo' in dadosAtualizados && 
         (typeof dadosAtualizados.cargo !== 'string' || dadosAtualizados.cargo.trim() === '')) {
       errors.push({ field: "cargo", message: "Cargo deve ser uma string não vazia" });
     }
-
     if ('dataDeIncorporacao' in dadosAtualizados && !isValidDate(dadosAtualizados.dataDeIncorporacao)) {
       errors.push({ field: "dataDeIncorporacao", message: "Data inválida ou no futuro" });
     }
@@ -145,7 +151,7 @@ module.exports = {
     if (!agenteAtualizado) {
       return res.status(404).json({ message: 'Agente não encontrado' });
     }
-
+    agenteAtualizado.dataDeIncorporacao = formatDate(agenteAtualizado.dataDeIncorporacao);
     res.status(200).json(agenteAtualizado);
   },
 
@@ -153,7 +159,7 @@ module.exports = {
     const id = req.params.id;
     const deletado = await agentesRepository.deleteById(id); 
     if (!deletado) {
-      return res.status(404).json({message:'Agente não encontrado'});
+      return res.status(404).json({ message: 'Agente não encontrado' });
     }
     res.status(204).send();
   }
